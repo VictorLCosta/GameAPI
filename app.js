@@ -34,7 +34,7 @@ var DB =
 app.get('/games', (req, res) => 
 {
     res.statusCode = 200;
-    res.json();
+    res.json(DB.games);
 });
 
 app.get('/games/:id', (req, res) => 
@@ -58,6 +58,18 @@ app.get('/games/:id', (req, res) =>
     {
         res.sendStatus(400);
     }
+});
+
+app.post('/games/save', (req, res) => 
+{
+    var { title, price, year } = req.body;
+
+    DB.games.push = ({
+        id: 4,
+        title,
+        price,
+        year
+    });
 });
 
 app.listen(8080, () => 
