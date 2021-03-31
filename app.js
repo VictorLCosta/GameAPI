@@ -74,6 +74,41 @@ app.post('/games/save', (req, res) =>
     res.sendStatus(201);
 });
 
+app.put('/games/update/:id', (req, res) => 
+{
+    if(isNaN(req.params.id))
+    {
+        var id = parseInt(req.params.id);
+
+        var game = DB.games.findIndex(g => g.id == id);
+
+        if(game != undefined)
+        {
+            var {title, price, year} = req.body;
+
+            if(title != undefined){
+                game.title = title;
+            }
+
+            if(price != undefined){
+                game.price = price;
+            }
+
+            if(year != undefined){
+                game.year = year;
+            }
+        }
+        else
+        {
+            res.sendStatus(400).send('Game not exist')
+        }
+    }
+    else
+    {
+        res.sendStatus(400);
+    }
+});
+
 app.delete('/games/delete/:id', (req, res) => 
 {
     if(isNaN(req.params.id))
