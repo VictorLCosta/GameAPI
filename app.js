@@ -70,6 +70,31 @@ app.post('/games/save', (req, res) =>
         price,
         year
     });
+
+    res.sendStatus(201);
+});
+
+app.delete('/games/delete/:id', (req, res) => 
+{
+    if(isNaN(req.params.id))
+    {
+        res.sendStatus(400);
+    }
+    else
+    {
+        var id = parseInt(req.params.id);
+
+        var index = DB.games.findIndex(g => g.id == id);
+        if(index == -1)
+        {
+            res.sendStatus(404);
+        }
+        else
+        {
+            DB.games.splice(index, 1);
+            res.sendStatus(200);
+        }
+    }
 });
 
 app.listen(8080, () => 
