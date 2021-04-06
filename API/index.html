@@ -42,6 +42,16 @@
             });
         }
 
+        function deleteGame(listItem)
+        {
+            var id = listItem.getAttribute("game-id")
+            axios.delete(`http://localhost:8080/games/delete/${id}`).then(response => {
+                window.alert("Game deletado")
+            }).catch(err => {
+                window.alert(err)
+            });
+        }
+
         axios
             .get('http://localhost:8080/games')
             .then(response => {
@@ -51,6 +61,7 @@
                 games.forEach(game => {
                     var item = document.createElement('li');
                     item.innerHTML = `${game.id} - ${game.title} - ${game.price}`;
+                    item.setAttribute("game-id", game.id);
                     list.appendChild(item);
                 });
             })
