@@ -1,7 +1,10 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const cors = require('cors')
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
+
+const jwtSecret = "ZU30o5HXQSzMknsH2dotE2ZwQqLqJxA8";
 
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -28,6 +31,15 @@ var DB =
             title: "Elder Scrolls 5 - Skyrim",
             year: 2011,
             price: 40
+        }
+    ],
+    users:
+    [
+        {
+            id: 1,
+            userName: "Victor Lima",
+            email: "victorlc2019@outlook.com",
+            password: "vulcan"
         }
     ]
 }
@@ -129,9 +141,57 @@ app.delete('/games/delete/:id', (req, res) =>
         else
         {
             DB.games.splice(index, 1);
-            res.sendStatus(200);
+            res.sendStatus(200).send("Email inválido");
         }
     }
+});
+
+app.post('/auth', (req, res) => 
+{
+    var {email, password} = req.body;
+
+    if(email != undefined)
+    {
+        var user = DB.users.find(u => u.email == email);
+
+        if(user != undefined)
+        {
+            if(user.password == password)
+            {
+                jwt.sign
+                (
+                    {id: user.id, email: user.email}, 
+                    jwtSecret, 
+                    {
+                        algorithm: "HS256",
+                        expiresIn: '100h'
+                    },
+                (err, token) => {
+                    if(err)
+                    {
+                        res.sendStatus(400).send("Falha interna");
+                    }
+                    else
+                    {
+                        res.sendStatus(200).sendStatus(token);
+                    }
+                });
+            }
+            else
+            {
+                res.sendStatus(401).send("Credenciais inválidas");
+            }
+        }
+        else
+        {
+            res.sendStatus(404).send("Email não existe na base de dados");
+        }
+    }
+    else
+    {
+        res.sendStatus(400);
+    }
+
 });
 
 app.listen(8080, () => 
