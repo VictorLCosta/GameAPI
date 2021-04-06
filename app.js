@@ -10,6 +10,34 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+function auth(req, res, next)
+{
+    const authToken = req.headers['authorization'];
+    
+    if(authToken != undefined)
+    {
+        const bearer = authToken.split(' ');
+        var token = bearer[1];
+
+        jwt.verify(token, jwtSecret, (err, data) => {
+            if(err)
+            {
+                res.sendStatus(401).send("Token inválido");
+            }
+            else
+            {
+                req.token = token;
+                req.loggedUser = {id: data.id, email: data.email};
+                next();
+            }
+        });
+    }
+    else
+    {
+        res.sendStatus(401).send("Credenciais inválidas");
+    }
+}
+
 var DB = 
 {
     games: 
@@ -45,7 +73,7 @@ var DB =
 }
 
 //Rotas
-app.get('/games', (req, res) => 
+app.get('/games', auth, (req, res) => 
 {
     res.statusCode = 200;
     res.json(DB.games);
@@ -173,7 +201,7 @@ app.post('/auth', (req, res) =>
                     }
                     else
                     {
-                        res.sendStatus(200).sendStatus(token);
+                        res.sendStatus(200).send(token);
                     }
                 });
             }
