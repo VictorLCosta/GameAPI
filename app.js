@@ -194,15 +194,15 @@ app.post('/auth', (req, res) =>
                         algorithm: "HS256",
                         expiresIn: '100h'
                     },
-                (err, token) => {
-                    if(err)
-                    {
-                        res.sendStatus(400).send("Falha interna");
-                    }
-                    else
-                    {
-                        res.sendStatus(200).send(token);
-                    }
+                    (err, token) => {
+                        if(err)
+                        {
+                            res.sendStatus(400).send("Falha interna");
+                        }
+                        else
+                        {
+                            res.sendStatus(200).send(token);
+                        }
                 });
             }
             else
